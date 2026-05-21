@@ -21,6 +21,26 @@ SET issue_status = '缺料',
 WHERE id = 1
 """)
 
+# ====================================
+# 建立 logs table
+# ====================================
+
+cursor.execute("""
+
+CREATE TABLE IF NOT EXISTS logs (
+
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    card_id INTEGER,
+
+    action TEXT,
+
+    created_at TEXT
+
+)
+
+""")
+
 conn.commit()
 conn.close()
 

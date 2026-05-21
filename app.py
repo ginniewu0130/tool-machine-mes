@@ -4,6 +4,31 @@ import sqlite3
 app = Flask(__name__)
 
 # ====================================
+# 新增系統 Log
+# ====================================
+
+def add_log(cursor, card_id, action):
+
+    cursor.execute("""
+
+        INSERT INTO logs (
+
+            card_id,
+            action,
+            created_at
+
+        )
+
+        VALUES (?, ?, datetime('now'))
+
+    """, (
+
+        card_id,
+        action
+
+    ))
+
+# ====================================
 # 取得資料
 # ====================================
 def get_data():
@@ -123,6 +148,18 @@ def card_detail(card_id):
 
     bom_items = cursor.fetchall()
 
+    # 取得 logs
+    cursor.execute("""
+
+        SELECT *
+        FROM logs
+        WHERE card_id = ?
+        ORDER BY id DESC
+
+    """, (card_id,))
+
+    logs = cursor.fetchall()
+
 # =========================
 # 計算齊套率
 # =========================
@@ -157,7 +194,8 @@ def card_detail(card_id):
         bom_items=bom_items,
         kit_rate=kit_rate,
         total_items=total_items,
-        arrived_items=arrived_items
+        arrived_items=arrived_items,
+        logs=logs
     )
 
 # ====================================
@@ -200,6 +238,15 @@ def add_bom(card_id):
         note
 
     ))
+    
+    add_log(
+
+        cursor,
+        card_id,
+
+        f"新增BOM 料號：{part_number}名稱：{part_name}數量：{quantity} 狀態：{status}"
+
+    )
 
     conn.commit()
     conn.close()
@@ -324,6 +371,15 @@ def update_bom(bom_id):
         bom_id
 
     ))
+
+    add_log(
+
+        cursor,
+        card_id,
+
+    f"[BOM更新] {part_number} / {part_name} / 狀態：{status}"   
+
+    )
 
     conn.commit()
     conn.close()
