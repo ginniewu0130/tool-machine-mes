@@ -30,7 +30,7 @@ for i, name in enumerate(columns):
     VALUES (?, ?, ?)
     """, (board_id, name, i))
 
-# 3. 建立一張工單卡片（模擬現場）
+# 3. 建立一張製令卡片（模擬現場）
 cursor.execute("""
 INSERT INTO cards (
     column_id,

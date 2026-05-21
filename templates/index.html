@@ -1,0 +1,193 @@
+<html>
+
+<head>
+
+    <title>工具機 Kanban</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+</head>
+
+<script
+    src="{{ url_for('static', filename='kanban.js') }}"
+></script>
+
+<body>
+
+    <h1>工具機 Kanban（MES 雛形）</h1>
+    
+    <!-- Dashboard -->
+
+    <div
+        style="
+            display:flex;
+            gap:20px;
+            margin-bottom:20px;
+            flex-wrap:wrap;
+        "
+    >
+
+        <div style="
+            background:white;
+            padding:15px;
+            border-radius:10px;
+            width:180px;
+        ">
+            <h3>製令總數</h3>
+            <h2>{{ total_cards }}</h2>
+        </div>
+
+        <div style="
+            background:#ffd6d6;
+            padding:15px;
+            border-radius:10px;
+            width:180px;
+        ">
+            <h3>缺料製令</h3>
+            <h2>{{ shortage_cards }}</h2>
+        </div>
+
+        <div style="
+            background:white;
+            padding:15px;
+            border-radius:10px;
+            width:180px;
+        ">
+            <h3>BOM總數</h3>
+            <h2>{{ total_bom }}</h2>
+        </div>
+
+        <div style="
+            background:#fff3cd;
+            padding:15px;
+            border-radius:10px;
+            width:180px;
+        ">
+            <h3>缺料件數</h3>
+            <h2>{{ shortage_bom }}</h2>
+        </div>
+
+        <div style="
+            background:#d4edda;
+            padding:15px;
+            border-radius:10px;
+            width:180px;
+        ">
+            <h3>平均齊套率</h3>
+            <h2>{{ avg_kit_rate }}%</h2>
+        </div>
+
+    </div>
+
+    <!-- 新增製令 -->
+    <form method="POST" action="/add_card"
+            style="
+            background:white;
+            padding:15px;
+            margin-bottom:20px;
+            border-radius:8px;
+            ">
+
+        <h3>新增製令</h3>
+
+        製令號：
+        <input type="text" name="work_order" required>
+
+        機型：
+        <input type="text" name="machine_model" required>
+
+        客戶：
+        <input type="text" name="customer">
+
+        負責人：
+        <input type="text" name="owner">
+
+        <button type="submit">
+            新增製令
+        </button>
+
+    </form>
+
+
+    <!-- Kanban -->
+    <div style="display:flex; gap:20px; align-items:flex-start;">
+
+    {% for col in columns %}
+
+        <div
+            class="column"
+            data-column-id="{{ col[0] }}"
+            style="
+                background:#e9ecef;
+                padding:10px;
+                width:250px;
+                min-height:500px;
+                border-radius:10px;
+            "
+        >
+
+            <h3>{{ col[2] }}</h3>
+
+            {% for card in cards %}
+
+                {% if card[1] == col[0] %}
+
+                    <div
+                        class="card"
+                        draggable="true"
+                        data-card-id="{{ card[0] }}"
+                        onclick="window.location='/card/{{ card[0] }}'"
+                        style="
+                            padding:10px;
+                            margin-bottom:10px;
+                            border-radius:8px;
+                            cursor:pointer;
+                            box-shadow:0 2px 4px rgba(0,0,0,0.2);
+
+                            background:
+                            {% if card[13] == '缺料' %}
+                                #ffd6d6
+                            {% elif card[13] == '待採購' %}
+                                #fff3cd
+                            {% elif card[13] == '外包延遲' %}
+                                #ffe0b2
+                            {% elif card[13] == '品質異常' %}
+                                #f8d7da
+                            {% else %}
+                                white
+                            {% endif %}
+                        "
+                    >
+
+                        <b>{{ card[2] }}</b><br><br>
+
+                        機型：{{ card[3] }}<br>
+                        客戶：{{ card[4] }}<br>
+                        負責人：{{ card[9] }}<br><br>
+
+                        <b>異常：</b>{{ card[13] }}<br>
+
+                        <small>
+                            {{ card[14] }}
+                        </small>
+
+                    </div>
+
+                {% endif %}
+
+            {% endfor %}
+
+        </div>
+
+    {% endfor %}
+
+    </div>
+
+
+    
+
+</body>
+
+</html>

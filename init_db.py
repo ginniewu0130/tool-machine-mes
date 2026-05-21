@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS columns (
 )
 """)
 
-# 3. cards（卡片 / 工單）
+# 3. cards（卡片 / 製令）
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS cards (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -1,0 +1,219 @@
+    <html>
+
+    <body style="font-family:Arial; padding:30px;">
+
+        <h1>製令詳細頁</h1>
+
+        <form method="POST" action="/update_card/{{ card[0] }}">
+
+            <p>
+                製令號：<br>
+                <input type="text" name="work_order" value="{{ card[2] }}">
+            </p>
+
+            <p>
+                機型：<br>
+                <input type="text" name="machine_model" value="{{ card[3] }}">
+            </p>
+
+            <p>
+                客戶：<br>
+                <input type="text" name="customer" value="{{ card[4] }}">
+            </p>
+
+            <p>
+                負責人：<br>
+                <input type="text" name="owner" value="{{ card[9] }}">
+            </p>
+
+            <p>
+                異常狀態：<br>
+
+                <select name="issue_status">
+
+                    <option value="正常"
+                    {% if card[13] == '正常' %}selected{% endif %}
+                    >正常</option>
+
+                    <option value="缺料"
+                    {% if card[13] == '缺料' %}selected{% endif %}
+                    >缺料</option>
+
+                    <option value="待採購"
+                    {% if card[13] == '待採購' %}selected{% endif %}
+                    >待採購</option>
+
+                    <option value="外包延遲"
+                    {% if card[13] == '外包延遲' %}selected{% endif %}
+                    >外包延遲</option>
+
+                    <option value="品質異常"
+                    {% if card[13] == '品質異常' %}selected{% endif %}
+                    >品質異常</option>
+
+                </select>
+
+            </p>
+
+            <p>
+                異常說明：<br>
+
+                <textarea
+                    name="issue_note"
+                    rows="5"
+                    cols="50"
+                >{{ card[14] }}</textarea>
+
+            </p>
+
+            <button type="submit">
+                儲存
+            </button>
+
+        </form>
+        <hr>
+
+        <h2>齊套率分析</h2>
+
+        <div
+            style="
+                background:#f5f5f5;
+                padding:15px;
+                margin-bottom:20px;
+                border-radius:10px;
+            "
+        >
+
+            <h3>
+
+                齊套率：
+
+                {% if kit_rate >= 90 %}
+
+                    <span style="color:green;">
+                        {{ kit_rate }}%
+                    </span>
+
+                {% elif kit_rate >= 60 %}
+
+                    <span style="color:orange;">
+                        {{ kit_rate }}%
+                    </span>
+
+                {% else %}
+
+                    <span style="color:red;">
+                        {{ kit_rate }}%
+                    </span>
+
+                {% endif %}
+
+            </h3>
+
+            <p>
+                已到料：
+                {{ arrived_items }}
+                /
+                {{ total_items }}
+            </p>
+
+        </div>
+        <hr>
+
+        <h2>BOM / 缺料明細</h2>
+
+                <form
+            method="POST"
+            action="/add_bom/{{ card[0] }}"
+            style="
+                background:#f5f5f5;
+                padding:15px;
+                margin-bottom:20px;
+            "
+        >
+
+            <h3>新增料件</h3>
+
+            料號：
+            <input type="text" name="part_number" required>
+
+            名稱：
+            <input type="text" name="part_name" required>
+
+            數量：
+            <input type="number" name="quantity" value="1">
+
+            狀態：
+
+            <select name="status">
+
+                <option value="已到料">
+                    已到料
+                </option>
+
+                <option value="缺料">
+                    缺料
+                </option>
+
+                <option value="待採購">
+                    待採購
+                </option>
+
+            </select>
+
+            備註：
+            <input type="text" name="note">
+
+            <button type="submit">
+                新增料件
+            </button>
+
+        </form>
+
+        <table border="1" cellpadding="10">
+
+            <tr>
+                <th>料號</th>
+                <th>名稱</th>
+                <th>數量</th>
+                <th>狀態</th>
+                <th>備註</th>
+                <th>操作</th>
+            </tr>
+
+            {% for item in bom_items %}
+
+            <tr
+
+                {% if item[5] == '缺料' %}
+                    style="background:#ffd6d6;"
+                {% elif item[5] == '已到料' %}
+                    style="background:#d4edda;"
+                {% endif %}
+
+            >
+
+                <td>{{ item[2] }}</td>
+                <td>{{ item[3] }}</td>
+                <td>{{ item[4] }}</td>
+                <td>{{ item[5] }}</td>
+                <td>{{ item[6] }}</td>
+                <td>
+                    <a href="/edit_bom/{{ item[0] }}">
+                        編輯
+                    </a>
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+        <br>
+
+        <a href="/">← 回 Kanban</a>
+
+    </body>
+
+    </html>

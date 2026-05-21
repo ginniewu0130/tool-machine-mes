@@ -1,0 +1,80 @@
+    <html>
+
+    <body style="font-family:Arial; padding:30px;">
+
+        <h1>BOM 編輯</h1>
+
+        <form method="POST" action="/update_bom/{{ bom[0] }}">
+
+            <p>
+                料號：<br>
+                <input type="text"
+                       name="part_number"
+                       value="{{ bom[2] }}">
+            </p>
+
+            <p>
+                名稱：<br>
+                <input type="text"
+                       name="part_name"
+                       value="{{ bom[3] }}">
+            </p>
+
+            <p>
+                數量：<br>
+                <input type="number"
+                       name="quantity"
+                       value="{{ bom[4] }}">
+            </p>
+
+            <p>
+                狀態：<br>
+
+                <select name="status">
+
+                    <option value="已到料"
+                    {% if bom[5] == '已到料' %}selected{% endif %}
+                    >
+                    已到料
+                    </option>
+
+                    <option value="缺料"
+                    {% if bom[5] == '缺料' %}selected{% endif %}
+                    >
+                    缺料
+                    </option>
+
+                    <option value="待採購"
+                    {% if bom[5] == '待採購' %}selected{% endif %}
+                    >
+                    待採購
+                    </option>
+
+                </select>
+
+            </p>
+
+            <p>
+                備註：<br>
+
+                <textarea
+                    name="note"
+                    rows="5"
+                    cols="50"
+                >{{ bom[6] }}</textarea>
+
+            </p>
+
+            <button type="submit">
+                儲存
+            </button>
+
+        </form>
+
+        <br>
+
+        <a href="/">← 回首頁</a>
+
+    </body>
+
+    </html>
